@@ -18,7 +18,9 @@ def bolge_model_data():
 
     Bølgeeksponeringsmodellen er utviklet av Norsk institutt for vannforskning (NIVA), tilgjengeliggjort som en del av kartgrunnlaget beskrevet i Bekkby m.fl. (2025
     Input raster expected at:  <root_path>/niva/EswmRaster.tif
-    Output written to:         <root_path>/niva/EswmRaster_clipped_cog.tif
+    Outputs written to:
+        <root_path>/niva/EswmRaster_filled_cog.tif         (filled, before clipping)
+        <root_path>/niva/EswmRaster_clipped_cog.tif        (filled and clipped to outline)
 
     """
 
@@ -143,6 +145,18 @@ def bolge_model_data():
         overwrite=True,
     )
 
+
+    filled_cog_path = root_path / "niva" / "EswmRaster_filled_cog.tif"
+    gdal.Translate(
+        filled_cog_path,
+        tmp_coarse_merged_path,
+        creationOptions=[
+            "COMPRESS=DEFLATE",
+            "BIGTIFF=IF_SAFER"
+        ],
+        format="COG"
+    )
+    print("Filled COG saved:", filled_cog_path)
 
     cog_path = root_path / "niva" / "EswmRaster_clipped_cog.tif"
     gdal.Translate(

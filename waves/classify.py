@@ -202,7 +202,6 @@ def clip_to_aoi(src_path: Path | str, dst_path: Path | str, aoi_path: str) -> No
         options=gdal.VectorTranslateOptions(
             clipSrc=str(tmp_gpkg),
             callback=gdal.TermProgress_nocb,
-            makeValid=True,
         ),
     )
     ds = None

@@ -211,7 +211,7 @@ def subtract_land():
             idx = int(f.read().strip())
     else:
         idx = 0
-        gdf = gpd.read_file(waves.paths.VRAW)
+        gdf = gpd.read_file(waves.paths.VMERGED)
     grunnlinje = gpd.read_file(waves.paths.GRUNNLINJE)
     gdf = gdf.to_crs(crs)
     gdf = gpd.clip(gdf, grunnlinje)

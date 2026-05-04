@@ -11,3 +11,5 @@ r.to.vect -s input=raster output=vector_blue feature=area
 3 Generalize with Douglas to get rid of excessive points:
 
 4. Substract land
+
+CLIPPED -> LAND_CLIPPED_VECTOR

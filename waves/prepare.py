@@ -41,6 +41,8 @@ def bolge_model_data():
     tmp_coarse_path = root_path / "niva" / "tmp_coarse.tif"
     tmp_coarse_upsampled_path = root_path / "niva" / "tmp_coarse_upsampled.tif"
     tmp_coarse_merged_path = root_path / "niva" / "tmp_coarse_merged.tif"
+    tmp_aoi_proximity_path = root_path / "niva" / "tmp_aoi_proximity.tif"
+    tmp_filled_padded_path = root_path / "niva" / "tmp_filled_padded.tif"
 
     # Load and preprocess marine vanntyper
     aoi = gpd.read_parquet("gs://niva-geodata/MarintNaturKart/aux/aoi_from_marine_vanntyper.geo.parquet").to_crs(crs)
@@ -70,6 +72,26 @@ def bolge_model_data():
     assert ds is not None, "gdal.Rasterize failed for aoi"
     ds = None
     print("AOI mask ready:", outline_mask_path)
+
+    print("Computing AOI proximity for padded clip...")
+    ds_aoi = gdal.Open(str(outline_mask_path))
+    driver = gdal.GetDriverByName("GTiff")
+    ds_prox = driver.Create(
+        str(tmp_aoi_proximity_path),
+        ds_aoi.RasterXSize, ds_aoi.RasterYSize, 1, gdal.GDT_Float32,
+        options=["COMPRESS=DEFLATE", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "BIGTIFF=IF_SAFER"],
+    )
+    ds_prox.SetGeoTransform(ds_aoi.GetGeoTransform())
+    ds_prox.SetProjection(ds_aoi.GetProjection())
+    gdal.ComputeProximity(
+        ds_aoi.GetRasterBand(1), ds_prox.GetRasterBand(1),
+        ["VALUES=1", "DISTUNITS=PIXEL"],
+        callback=gdal.TermProgress_nocb,
+    )
+    ds_prox.FlushCache()
+    ds_prox = None
+    ds_aoi = None
+    print("AOI proximity ready:", tmp_aoi_proximity_path)
 
     # Copy raster with nodata=0 for in-place filling
     print("Copying raster for filling...")
@@ -136,9 +158,22 @@ def bolge_model_data():
     )
 
 
+    print("Clipping filled raster to AOI + 2-pixel padding...")
+    gdal_calc.Calc(
+        calc="numpy.where(B <= 2, A, 0)",
+        outfile=str(tmp_filled_padded_path),
+        A=str(tmp_coarse_merged_path),
+        B=str(tmp_aoi_proximity_path),
+        type="Int32",
+        NoDataValue=0,
+        hideNoData=True,
+        creation_options=["COMPRESS=DEFLATE", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "BIGTIFF=IF_SAFER"],
+        overwrite=True,
+    )
+
     gdal.Translate(
          waves.paths.FILLED_COG,
-        tmp_coarse_merged_path,
+        tmp_filled_padded_path,
         creationOptions=[
             "COMPRESS=DEFLATE",
             "BIGTIFF=IF_SAFER"
@@ -171,6 +206,8 @@ def bolge_model_data():
     )
     print("COG saved:", waves.paths.FILLED_CLIPPED_COG)
     outline_mask_path.unlink()
+    tmp_aoi_proximity_path.unlink(missing_ok=True)
+    tmp_filled_padded_path.unlink(missing_ok=True)
     tmp_filled_path.unlink(missing_ok=True)
     tmp_clipped_path.unlink(missing_ok=True)
     tmp_coarse_path.unlink(missing_ok=True)
@@ -230,13 +267,11 @@ def subtract_land():
     else:
         idx = 0
         gdf = gpd.read_file(waves.paths.CLEANED_VECTOR)
-    grunnlinje = gpd.read_file(waves.paths.GRUNNLINJE)
+
     gdf = gdf.to_crs(crs)
-    gdf = gpd.clip(gdf, grunnlinje)
-    gdf = gdf[~gdf.is_empty].reset_index(drop=True)
 
     print(f"Starting land subtraction from geometry with {len(gdf)} features, starting at index {idx}...")
-    land  = gpd.read_file(waves.paths.LAND)
+    land  = gpd.read_file(waves.paths.LAND, layer="landareal")
 
     time_start = time()
     n = len(land.geometry)

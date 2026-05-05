@@ -108,7 +108,6 @@ def _merge_inside_grass(input_gpkg: str, output_gpkg: str, threshold: float) -> 
         overwrite=True,
     )
 
-    print(f"Exporting to {output_gpkg} …")
     gs.run_command(
         "v.out.ogr",
         input="merged_polygons",

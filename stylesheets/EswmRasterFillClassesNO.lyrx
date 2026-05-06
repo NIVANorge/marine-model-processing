@@ -3,13 +3,13 @@
   "version": "3.2.0",
   "build": 36057,
   "layers": [
-    "CIMPATH=raster/EswmRaster_classified_clipped_en.json"
+    "CIMPATH=raster/EswmRasterFillClassesNO.json"
   ],
   "layerDefinitions": [
     {
       "type": "CIMRasterLayer",
-      "name": "EswmRaster_classified_clipped_en",
-      "uRI": "CIMPATH=raster/EswmRaster_classified_clipped_en.json",
+      "name": "EswmRasterFillClassesNO",
+      "uRI": "CIMPATH=raster/EswmRasterFillClassesNO.json",
       "visibility": true,
       "showPopups": true,
       "colorizer": {

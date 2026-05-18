@@ -1,15 +1,8 @@
 # eswm-bolgemodell
 
-1 Import Raster:
+Post-processing steps for NIVAs ESWM wave model dataset. This repo contain various steps for filling, clipping and vectorizing NIVAs ESWM wave exposure dataset.
 
-r.in.gdal input=raster.tif output=raster
-
-2 Vectorize (option -s leads to slightly smoothed 45-degree edges):
-
-r.to.vect -s input=raster output=vector_blue feature=area
-
-3 Generalize with Douglas to get rid of excessive points:
-
-4. Substract land
-
-CLIPPED -> LAND_CLIPPED_VECTOR
+The three main products produced from this code is:
+* EswmRasterFill.tif
+* EswmRasterFillClasses.tif
+* EswmVectorDirect.gpkg

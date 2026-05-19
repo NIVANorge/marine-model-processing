@@ -1,3 +1,3 @@
-from waves import classify, paths, prepare, smooth
+from waves import classify, paths, preprocess, vectorize
 
-__all__ = ["classify", "paths", "prepare", ]
+__all__ = ["classify", "paths", "preprocess", "vectorize"]

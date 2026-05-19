@@ -3,7 +3,7 @@
 Vectorize pipeline (r.in.gdal → r.to.vect -s → v.generalize → v.out.ogr)
 writes to paths.VRAW.  A separate merge step (v.clean rmarea) merges small
 polygons into their largest neighbour and writes to paths.VMERGED for
-prepare.subtract_land().
+preprocess.subtract_land().
 """
 
 from __future__ import annotations

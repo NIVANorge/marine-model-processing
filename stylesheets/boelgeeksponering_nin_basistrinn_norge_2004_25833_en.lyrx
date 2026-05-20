@@ -3,13 +3,13 @@
   "version": "3.2.0",
   "build": 36057,
   "layers": [
-    "CIMPATH=raster/EswmVectorDirectClassesNO.json"
+    "CIMPATH=raster/boelgeeksponering_nin_basistrinn_norge_2004_25833_en.json"
   ],
   "layerDefinitions": [
     {
       "type": "CIMRasterLayer",
-      "name": "EswmVectorDirectClassesNO",
-      "uRI": "CIMPATH=raster/EswmVectorDirectClassesNO.json",
+      "name": "boelgeeksponering_nin_basistrinn_norge_2004_25833_en",
+      "uRI": "CIMPATH=raster/boelgeeksponering_nin_basistrinn_norge_2004_25833_en.json",
       "visibility": true,
       "showPopups": true,
       "colorizer": {

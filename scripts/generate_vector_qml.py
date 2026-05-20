@@ -12,7 +12,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from waves.classify import CLASSES
-
+import waves
 # Same color sequence as the raster QMLs (classes 1–9 only)
 COLORS_HEX = [
     "#EDF8FB",  # 1 – minimal
@@ -123,6 +123,7 @@ def build_qml(lang: str) -> str:
 if __name__ == "__main__":
     out_dir = Path(__file__).resolve().parent.parent / "stylesheets"
     for lang in ("NO", "EN"):
-        path = out_dir / f"EswmVectorDirectClasses{lang}.qml"
+        name = waves.paths.DIRECT_VECTOR.name.split(".")[0]
+        path = out_dir / f"{name}_{lang}.qml"
         path.write_text(build_qml(lang), encoding="utf-8")
         print(f"Written: {path}")

@@ -28,7 +28,7 @@
         <paletteEntry value="4" alpha="255" color="#238B45" label="LM-VF_c — Slightly sheltered, > 10 000, ≤ 50 000"/>
         <paletteEntry value="5" alpha="255" color="#FFFFB2" label="LM-VF_d — Weakly exposed, > 50 000, ≤ 100 000"/>
         <paletteEntry value="6" alpha="255" color="#FECC5C" label="LM-VF_e — Slightly exposed, > 100 000, ≤ 500 000"/>
-        <paletteEntry value="7" alpha="255" color="#FD8D3C" label="LM-VF_f — Exposed, > 500 000, ≤ 1 000 000"/>
+        <paletteEntry value="7" alpha="255" color="#FD8D3C" label="LM-VF_f — Moderately exposed, > 500 000, ≤ 1 000 000"/>
         <paletteEntry value="8" alpha="255" color="#F03B20" label="LM-VF_g — Very exposed, > 1 000 000, ≤ 2 000 000"/>
         <paletteEntry value="9" alpha="255" color="#BD0026" label="LM-VF_h — Extremely exposed, > 2 000 000, ≤ 4 000 000"/>
       </colorPalette>

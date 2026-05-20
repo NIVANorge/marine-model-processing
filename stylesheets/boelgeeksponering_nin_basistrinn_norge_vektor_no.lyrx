@@ -3,36 +3,497 @@
   "version": "3.2.0",
   "build": 36057,
   "layers": [
-    "CIMPATH=raster/boelgeeksponering_nin_basistrinn_norge_vektor_no.json"
+    "CIMPATH=map/boelgeeksponering_nin_basistrinn_norge_vektor_no.json"
   ],
   "layerDefinitions": [
     {
-      "type": "CIMRasterLayer",
+      "type": "CIMFeatureLayer",
       "name": "boelgeeksponering_nin_basistrinn_norge_vektor_no",
-      "uRI": "CIMPATH=raster/boelgeeksponering_nin_basistrinn_norge_vektor_no.json",
+      "uRI": "CIMPATH=map/boelgeeksponering_nin_basistrinn_norge_vektor_no.json",
       "visibility": true,
       "showPopups": true,
-      "colorizer": {
-        "type": "CIMRasterUniqueValueColorizer",
-        "defaultColor": {
-          "type": "CIMRGBColor",
-          "values": [
-            130,
-            130,
-            130,
-            100
-          ]
+      "renderer": {
+        "type": "CIMUniqueValueRenderer",
+        "defaultSymbol": {
+          "type": "CIMSymbolReference",
+          "symbol": {
+            "type": "CIMPolygonSymbol",
+            "symbolLayers": [
+              {
+                "type": "CIMSolidFill",
+                "enable": true,
+                "color": {
+                  "type": "CIMRGBColor",
+                  "values": [
+                    130,
+                    130,
+                    130,
+                    100
+                  ]
+                }
+              },
+              {
+                "type": "CIMSolidStroke",
+                "enable": true,
+                "width": 0,
+                "color": {
+                  "type": "CIMRGBColor",
+                  "values": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            ]
+          }
         },
         "defaultLabel": "<all other values>",
-        "fieldName": "Value",
+        "useDefaultSymbol": true,
+        "fields": [
+          "class_int"
+        ],
         "groups": [
           {
-            "type": "CIMRasterUniqueValueGroup",
-            "classes": [],
-            "heading": "Value"
+            "type": "CIMUniqueValueGroup",
+            "classes": [
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "1"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_0 — Still water",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            237,
+                            248,
+                            251,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "2"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_a — Very sheltered",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            178,
+                            226,
+                            226,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "3"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_b — Moderately sheltered",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            102,
+                            194,
+                            164,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "4"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_c — Slightly sheltered",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            35,
+                            139,
+                            69,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "5"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_d — Weakly sheltered",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            255,
+                            255,
+                            178,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "6"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_e — Slightly exposed",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            254,
+                            204,
+                            92,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "7"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_f — Moderately exposed",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            253,
+                            141,
+                            60,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "8"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_g — Very exposed",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            240,
+                            59,
+                            32,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              },
+              {
+                "type": "CIMUniqueValueClass",
+                "values": [
+                  {
+                    "type": "CIMUniqueValue",
+                    "fieldValues": [
+                      "9"
+                    ]
+                  }
+                ],
+                "label": "LM-VF_h — Extremely exposed",
+                "symbol": {
+                  "type": "CIMSymbolReference",
+                  "symbol": {
+                    "type": "CIMPolygonSymbol",
+                    "symbolLayers": [
+                      {
+                        "type": "CIMSolidFill",
+                        "enable": true,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            189,
+                            0,
+                            38,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type": "CIMSolidStroke",
+                        "enable": true,
+                        "width": 0,
+                        "color": {
+                          "type": "CIMRGBColor",
+                          "values": [
+                            0,
+                            0,
+                            0,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "visible": true
+              }
+            ],
+            "heading": "class_int"
           }
-        ],
-        "useDefaultColor": false
+        ]
       }
     }
   ]

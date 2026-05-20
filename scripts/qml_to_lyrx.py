@@ -1,4 +1,10 @@
-"""Convert QGIS paletted raster styles (.qml) to ArcGIS Pro layer files (.lyrx)."""
+"""Convert QGIS raster and vector styles (.qml) to ArcGIS Pro layer files (.lyrx).
+
+Supported QML renderer types:
+- paletteEntry       → CIMRasterUniqueValueColorizer   (paletted/classified raster)
+- singlebandpseudocolor → CIMRasterClassifyColorizer   (continuous/discrete raster)
+- categorizedSymbol  → CIMUniqueValueRenderer           (vector polygon layer)
+"""
 
 import json
 import xml.etree.ElementTree as ET
@@ -10,24 +16,45 @@ def hex_to_rgb(hex_color: str) -> list[int]:
     return [int(h[i : i + 2], 16) for i in (0, 2, 4)]
 
 
-def parse_qml(qml_path: Path) -> list[dict]:
-    """Extract palette entries from a QGIS paletted raster QML file."""
+def _css_to_rgb(css_color: str) -> list[int]:
+    """Parse a QGIS 'R,G,B,A' color string and return [R, G, B]."""
+    parts = css_color.split(",")
+    return [int(parts[0]), int(parts[1]), int(parts[2])]
+
+
+def detect_qml_type(qml_path: Path) -> str:
+    """Return 'paletted_raster', 'continuous_raster', or 'vector'."""
     tree = ET.parse(qml_path)
     root = tree.getroot()
-    entries = []
-    for entry in root.iter("paletteEntry"):
-        entries.append(
-            {
-                "value": entry.attrib["value"],
-                "color": entry.attrib["color"],
-                "label": entry.attrib["label"],
-            }
-        )
-    return entries
+    if root.find(".//paletteEntry") is not None:
+        return "paletted_raster"
+    renderer = root.find(".//renderer-v2")
+    if renderer is not None and renderer.attrib.get("type") == "categorizedSymbol":
+        return "vector"
+    if root.find(".//colorrampshader") is not None:
+        return "continuous_raster"
+    raise ValueError(f"Unrecognised QML renderer type in {qml_path}")
 
 
-def build_lyrx(name: str, entries: list[dict]) -> dict:
-    """Build an ArcGIS Pro CIM layer document (lyrx) for a unique value raster."""
+# ---------------------------------------------------------------------------
+# Paletted raster
+# ---------------------------------------------------------------------------
+
+
+def parse_paletted_raster(qml_path: Path) -> list[dict]:
+    tree = ET.parse(qml_path)
+    root = tree.getroot()
+    return [
+        {
+            "value": e.attrib["value"],
+            "color": e.attrib["color"],
+            "label": e.attrib["label"],
+        }
+        for e in root.iter("paletteEntry")
+    ]
+
+
+def build_lyrx_paletted_raster(name: str, entries: list[dict]) -> dict:
     classes = []
     for entry in entries:
         r, g, b = hex_to_rgb(entry["color"])
@@ -40,7 +67,6 @@ def build_lyrx(name: str, entries: list[dict]) -> dict:
                 "visible": True,
             }
         )
-
     return {
         "type": "CIMLayerDocument",
         "version": "3.2.0",
@@ -55,10 +81,7 @@ def build_lyrx(name: str, entries: list[dict]) -> dict:
                 "showPopups": True,
                 "colorizer": {
                     "type": "CIMRasterUniqueValueColorizer",
-                    "defaultColor": {
-                        "type": "CIMRGBColor",
-                        "values": [130, 130, 130, 100],
-                    },
+                    "defaultColor": {"type": "CIMRGBColor", "values": [130, 130, 130, 100]},
                     "defaultLabel": "<all other values>",
                     "fieldName": "Value",
                     "groups": [
@@ -75,10 +98,179 @@ def build_lyrx(name: str, entries: list[dict]) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# Continuous / discrete-class raster  (singlebandpseudocolor / colorrampshader)
+# ---------------------------------------------------------------------------
+
+
+def parse_continuous_raster(qml_path: Path) -> list[dict]:
+    tree = ET.parse(qml_path)
+    root = tree.getroot()
+    return [
+        {
+            "value": float(item.attrib["value"]),
+            "color": item.attrib["color"],
+            "label": item.attrib["label"],
+        }
+        for item in root.iter("item")
+    ]
+
+
+def build_lyrx_continuous_raster(name: str, entries: list[dict]) -> dict:
+    breaks = []
+    for entry in entries:
+        r, g, b = hex_to_rgb(entry["color"])
+        breaks.append(
+            {
+                "type": "CIMRasterClassBreak",
+                "upperBound": entry["value"],
+                "label": entry["label"],
+                "color": {"type": "CIMRGBColor", "values": [r, g, b, 100]},
+            }
+        )
+    return {
+        "type": "CIMLayerDocument",
+        "version": "3.2.0",
+        "build": 36057,
+        "layers": [f"CIMPATH=raster/{name}.json"],
+        "layerDefinitions": [
+            {
+                "type": "CIMRasterLayer",
+                "name": name,
+                "uRI": f"CIMPATH=raster/{name}.json",
+                "visibility": True,
+                "showPopups": True,
+                "colorizer": {
+                    "type": "CIMRasterClassifyColorizer",
+                    "classificationMethod": "Manual",
+                    "breaks": breaks,
+                    "defaultColor": {"type": "CIMRGBColor", "values": [130, 130, 130, 100]},
+                    "defaultLabel": "<all other values>",
+                    "fieldName": "Value",
+                },
+            }
+        ],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Vector (categorized polygon)
+# ---------------------------------------------------------------------------
+
+
+def parse_vector(qml_path: Path) -> tuple[list[dict], str]:
+    """Return (entries, field_name) where each entry has value, label, color."""
+    tree = ET.parse(qml_path)
+    root = tree.getroot()
+    renderer = root.find(".//renderer-v2")
+    field = renderer.attrib.get("attr", "Value")
+
+    # Build symbol index → fill color map
+    sym_colors: dict[str, list[int]] = {}
+    for symbol in renderer.findall(".//symbols/symbol"):
+        sym_name = symbol.attrib["name"]
+        for option in symbol.findall(".//layer/Option/Option[@name='color']"):
+            sym_colors[sym_name] = _css_to_rgb(option.attrib["value"])
+            break
+
+    entries = []
+    for cat in renderer.findall(".//categories/category"):
+        sym_idx = cat.attrib["symbol"]
+        entries.append(
+            {
+                "value": cat.attrib["value"],
+                "label": cat.attrib["label"],
+                "color": sym_colors.get(sym_idx, [130, 130, 130]),
+            }
+        )
+    return entries, field
+
+
+def _solid_fill_symbol(r: int, g: int, b: int) -> dict:
+    return {
+        "type": "CIMSymbolReference",
+        "symbol": {
+            "type": "CIMPolygonSymbol",
+            "symbolLayers": [
+                {
+                    "type": "CIMSolidFill",
+                    "enable": True,
+                    "color": {"type": "CIMRGBColor", "values": [r, g, b, 100]},
+                },
+                {
+                    "type": "CIMSolidStroke",
+                    "enable": True,
+                    "width": 0,
+                    "color": {"type": "CIMRGBColor", "values": [0, 0, 0, 0]},
+                },
+            ],
+        },
+    }
+
+
+def build_lyrx_vector(name: str, entries: list[dict], field: str) -> dict:
+    classes = []
+    for entry in entries:
+        r, g, b = entry["color"]
+        classes.append(
+            {
+                "type": "CIMUniqueValueClass",
+                "values": [{"type": "CIMUniqueValue", "fieldValues": [entry["value"]]}],
+                "label": entry["label"],
+                "symbol": _solid_fill_symbol(r, g, b),
+                "visible": True,
+            }
+        )
+    return {
+        "type": "CIMLayerDocument",
+        "version": "3.2.0",
+        "build": 36057,
+        "layers": [f"CIMPATH=map/{name}.json"],
+        "layerDefinitions": [
+            {
+                "type": "CIMFeatureLayer",
+                "name": name,
+                "uRI": f"CIMPATH=map/{name}.json",
+                "visibility": True,
+                "showPopups": True,
+                "renderer": {
+                    "type": "CIMUniqueValueRenderer",
+                    "defaultSymbol": _solid_fill_symbol(130, 130, 130),
+                    "defaultLabel": "<all other values>",
+                    "useDefaultSymbol": True,
+                    "fields": [field],
+                    "groups": [
+                        {
+                            "type": "CIMUniqueValueGroup",
+                            "classes": classes,
+                            "heading": field,
+                        }
+                    ],
+                },
+            }
+        ],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Dispatch
+# ---------------------------------------------------------------------------
+
+
 def convert(qml_path: Path) -> Path:
     name = qml_path.stem
-    entries = parse_qml(qml_path)
-    doc = build_lyrx(name, entries)
+    qml_type = detect_qml_type(qml_path)
+
+    if qml_type == "paletted_raster":
+        entries = parse_paletted_raster(qml_path)
+        doc = build_lyrx_paletted_raster(name, entries)
+    elif qml_type == "continuous_raster":
+        entries = parse_continuous_raster(qml_path)
+        doc = build_lyrx_continuous_raster(name, entries)
+    elif qml_type == "vector":
+        entries, field = parse_vector(qml_path)
+        doc = build_lyrx_vector(name, entries, field)
+
     lyrx_path = qml_path.with_suffix(".lyrx")
     lyrx_path.write_text(json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8")
     return lyrx_path

@@ -36,13 +36,13 @@ CLASSES = pd.DataFrame(
             "extremely exposed",
             "disruptively exposed",
         ],
-        # Lower bound (inclusive), upper bound (exclusive); None = no bound
+        # Lower bound (exclusive), upper bound (inclusive); None = no bound
         "swm_lower": [None, 1_200, 4_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 2_000_000, 4_000_000],
         "swm_upper": [1_200, 4_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 2_000_000, 4_000_000, None],
     }
 )
 
-# Breakpoints for numpy.digitize (right=False: bins[i] <= x < bins[i+1])
+# Breakpoints for numpy.digitize (right=True: bins[i-1] < x <= bins[i])
 SWM_BINS = [1_200, 4_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 2_000_000, 4_000_000]
 
 
@@ -52,10 +52,10 @@ def classify_swm_values(data: np.ndarray, nodata: int = 0) -> np.ndarray:
     """Map SWM raster values to NiN 3 class integers 1–10.
 
     Nodata pixels (value == nodata) are returned as 0 in the output.
-    Values < 1 200 → 1, ≥ 1 200 < 4 000 → 2, …, ≥ 4 000 000 → 10.
+    Values ≤ 1 200 → 1, > 1 200 ≤ 4 000 → 2, …, > 4 000 000 → 10.
     """
     mask = data == nodata
-    classified = (np.digitize(data, SWM_BINS) + 1).astype(np.uint8)
+    classified = (np.digitize(data, SWM_BINS, right=True) + 1).astype(np.uint8)
     classified[mask] = 0
     return classified
 

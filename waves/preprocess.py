@@ -60,6 +60,7 @@ def bolge_model_data():
         initValues=[0],
         noData=255,
         outputBounds=[b.left, b.bottom, b.right, b.top],
+        outputSRS=crs,
         xRes=res_x,
         yRes=res_y,
         allTouched=True,

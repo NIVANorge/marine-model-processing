@@ -13,7 +13,7 @@ CLASSES = pd.DataFrame(
         "class_int": range(1, 11),
         "trinn": ["0", "a", "b", "c", "d", "e", "f", "g", "h", "y"],
         "navn_no": [
-            "minimal vannforstyrrelsesintensitet",
+            "minimal vannforstyrrelse",
             "svært beskyttet",
             "temmelig beskyttet",
             "litt beskyttet",
@@ -25,11 +25,11 @@ CLASSES = pd.DataFrame(
             "disruptivt eksponert",
         ],
         "navn_en": [
-            "still water",
+            "minimal water movement",
             "very sheltered",
             "moderately sheltered",
             "slightly sheltered",
-            "weakly sheltered",
+            "weakly exposed",
             "slightly exposed",
             "moderately exposed",
             "very exposed",

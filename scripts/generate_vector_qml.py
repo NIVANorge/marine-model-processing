@@ -122,8 +122,8 @@ def build_qml(lang: str) -> str:
 
 if __name__ == "__main__":
     out_dir = Path(__file__).resolve().parent.parent / "stylesheets"
-    for lang in ("NO", "EN"):
+    for lang in ("no", "en"):
         name = waves.paths.DIRECT_VECTOR.name.split(".")[0]
-        path = out_dir / f"{name}_{lang}.qml"
+        path = out_dir / f"{name}_vektor_{lang}.qml"
         path.write_text(build_qml(lang), encoding="utf-8")
         print(f"Written: {path}")

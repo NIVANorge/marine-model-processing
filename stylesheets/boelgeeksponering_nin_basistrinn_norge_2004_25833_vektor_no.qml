@@ -3,15 +3,15 @@
   <renderer-v2 forceraster="0" symbollevels="0" type="categorizedSymbol"
                enableorderby="0" referencescale="-1" attr="class_int">
     <categories>
-      <category value="1" label="LM-VF_0 — Minimal vannforstyrrelsesintensitet" symbol="0" render="true"/>
-      <category value="2" label="LM-VF_a — Svært beskyttet" symbol="1" render="true"/>
-      <category value="3" label="LM-VF_b — Temmelig beskyttet" symbol="2" render="true"/>
-      <category value="4" label="LM-VF_c — Litt beskyttet" symbol="3" render="true"/>
-      <category value="5" label="LM-VF_d — Svakt eksponert" symbol="4" render="true"/>
-      <category value="6" label="LM-VF_e — Litt eksponert" symbol="5" render="true"/>
-      <category value="7" label="LM-VF_f — Temmelig eksponert" symbol="6" render="true"/>
-      <category value="8" label="LM-VF_g — Svært eksponert" symbol="7" render="true"/>
-      <category value="9" label="LM-VF_h — Ekstremt eksponert" symbol="8" render="true"/>
+      <category value="1" label="LM-VF_0 — Still water" symbol="0" render="true"/>
+      <category value="2" label="LM-VF_a — Very sheltered" symbol="1" render="true"/>
+      <category value="3" label="LM-VF_b — Moderately sheltered" symbol="2" render="true"/>
+      <category value="4" label="LM-VF_c — Slightly sheltered" symbol="3" render="true"/>
+      <category value="5" label="LM-VF_d — Weakly sheltered" symbol="4" render="true"/>
+      <category value="6" label="LM-VF_e — Slightly exposed" symbol="5" render="true"/>
+      <category value="7" label="LM-VF_f — Moderately exposed" symbol="6" render="true"/>
+      <category value="8" label="LM-VF_g — Very exposed" symbol="7" render="true"/>
+      <category value="9" label="LM-VF_h — Extremely exposed" symbol="8" render="true"/>
     </categories>
     <symbols>
       <symbol name="0" alpha="1" clip_to_extent="1" type="fill" force_rhr="0">

@@ -98,71 +98,6 @@ def build_lyrx_paletted_raster(name: str, entries: list[dict]) -> dict:
     }
 
 
-# ---------------------------------------------------------------------------
-# Continuous / discrete-class raster  (singlebandpseudocolor / colorrampshader)
-# ---------------------------------------------------------------------------
-
-
-def parse_continuous_raster(qml_path: Path) -> tuple[list[dict], float]:
-    """Return (entries, minimum_break) parsed from a singlebandpseudocolor QML."""
-    tree = ET.parse(qml_path)
-    root = tree.getroot()
-    shader = root.find(".//colorrampshader")
-    minimum_break = float(shader.attrib.get("minimumValue", 0)) if shader is not None else 0.0
-    entries = [
-        {
-            "value": float(item.attrib["value"]),
-            "color": item.attrib["color"],
-            "label": item.attrib["label"],
-        }
-        for item in root.iter("item")
-    ]
-    return entries, minimum_break
-
-
-def build_lyrx_continuous_raster(name: str, entries: list[dict], minimum_break: float = 0.0) -> dict:
-    class_breaks = []
-    for entry in entries:
-        r, g, b = hex_to_rgb(entry["color"])
-        class_breaks.append(
-            {
-                "type": "CIMColorClassBreak",
-                "upperBound": entry["value"],
-                "label": entry["label"],
-                "color": {"type": "CIMRGBColor", "values": [r, g, b, 100]},
-            }
-        )
-    return {
-        "type": "CIMLayerDocument",
-        "version": "3.2.0",
-        "build": 36057,
-        "layers": [f"CIMPATH=raster/{name}.json"],
-        "layerDefinitions": [
-            {
-                "type": "CIMRasterLayer",
-                "name": name,
-                "uRI": f"CIMPATH=raster/{name}.json",
-                "visibility": True,
-                "showPopups": True,
-                "colorizer": {
-                    "type": "CIMRasterClassifyColorizer",
-                    "classificationMethod": "Manual",
-                    "minimumBreak": minimum_break,
-                    "classBreaks": class_breaks,
-                    "defaultColor": {"type": "CIMRGBColor", "values": [130, 130, 130, 100]},
-                    "defaultLabel": "<all other values>",
-                    "fieldName": "Value",
-                },
-            }
-        ],
-    }
-
-
-# ---------------------------------------------------------------------------
-# Vector (categorized polygon)
-# ---------------------------------------------------------------------------
-
-
 def parse_vector(qml_path: Path) -> tuple[list[dict], str]:
     """Return (entries, field_name) where each entry has value, label, color."""
     tree = ET.parse(qml_path)
@@ -270,8 +205,7 @@ def convert(qml_path: Path) -> Path:
         entries = parse_paletted_raster(qml_path)
         doc = build_lyrx_paletted_raster(name, entries)
     elif qml_type == "continuous_raster":
-        entries, minimum_break = parse_continuous_raster(qml_path)
-        doc = build_lyrx_continuous_raster(name, entries, minimum_break)
+        return Path("")
     elif qml_type == "vector":
         entries, field = parse_vector(qml_path)
         doc = build_lyrx_vector(name, entries, field)
@@ -285,4 +219,7 @@ if __name__ == "__main__":
     stylesheet_dir = Path(__file__).parent.parent / "stylesheets"
     for qml_file in sorted(stylesheet_dir.glob("*.qml")):
         out = convert(qml_file)
-        print(f"{qml_file.name} → {out.name}")
+        if out.name:
+            print(f"{qml_file.name} → {out.name}")
+        else:
+            print(f"{qml_file.name} → (not implemented)")

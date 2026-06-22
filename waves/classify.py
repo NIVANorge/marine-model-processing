@@ -110,40 +110,6 @@ def reclassify_raster(src_path: Path | str, dst_path: Path | str, block_size: in
     dst_ds = src_ds = None
 
 
-def sieve_filter(
-    src_path: Path | str,
-    dst_path: Path | str,
-    threshold: int = 1,
-    connectedness: int = 8,
-) -> None:
-    """Remove isolated pixel regions from a classified raster.
-
-    Args:
-        src_path: Input classified raster.
-        dst_path: Output sieved raster.
-        threshold: Regions with ≤ threshold pixels are removed.
-        connectedness: 4 or 8 pixel connectivity.
-    """
-    src_ds = gdal.Open(str(src_path), gdal.GA_ReadOnly)
-    src_band = src_ds.GetRasterBand(1)
-
-    driver = gdal.GetDriverByName("GTiff")
-    print("Copying classified raster...")
-    dst_ds = driver.CreateCopy(
-        str(dst_path),
-        src_ds,
-        options=["COMPRESS=LZW", "TILED=YES", "BLOCKXSIZE=256", "BLOCKYSIZE=256", "BIGTIFF=IF_SAFER"],
-        callback=gdal.TermProgress_nocb,
-    )
-    dst_band = dst_ds.GetRasterBand(1)
-
-    print(f"Applying sieve filter (threshold={threshold}, connectedness={connectedness})...")
-    gdal.SieveFilter(src_band, None, dst_band, threshold=threshold, connectedness=connectedness, callback=gdal.TermProgress_nocb)
-
-    dst_band.FlushCache()
-    dst_ds = src_ds = None
-
-
 def add_class_attributes(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """Merge NiN 3 class attributes (trinn, navn_no, navn_en) into a GeoDataFrame.
 

@@ -1,0 +1,88 @@
+{
+  "type": "CIMLayerDocument",
+  "version": "3.2.0",
+  "build": 36057,
+  "layers": [
+    "CIMPATH=raster/sukkertare-tetthetsklasser_norge_no.json"
+  ],
+  "layerDefinitions": [
+    {
+      "type": "CIMRasterLayer",
+      "name": "sukkertare-tetthetsklasser_norge_no",
+      "uRI": "CIMPATH=raster/sukkertare-tetthetsklasser_norge_no.json",
+      "visibility": true,
+      "showPopups": true,
+      "colorizer": {
+        "type": "CIMRasterClassifyColorizer",
+        "classBreaks": [
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 1.0,
+            "label": "Enkeltplanter, ≤ 1",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                230,
+                185,
+                215,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 7.0,
+            "label": "Spredt, > 1, ≤ 7",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                180,
+                100,
+                150,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 15.0,
+            "label": "Middels tett, > 7, ≤ 15",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                136,
+                34,
+                85,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 10000000000.0,
+            "label": "Tett/heldekkende skog, > 15",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                68,
+                17,
+                43,
+                100
+              ]
+            }
+          }
+        ],
+        "minimumBreak": 0.1,
+        "field": "Value",
+        "showInAscendingOrder": true,
+        "numberFormat": {
+          "type": "CIMNumericFormat",
+          "alignmentOption": "esriAlignRight",
+          "alignmentWidth": 0,
+          "roundingOption": "esriRoundNumberOfDecimals",
+          "roundingValue": 6
+        }
+      }
+    }
+  ]
+}

@@ -20,3 +20,7 @@ niva/*.xml
 !.pixi/config.toml
 poetry.lock
 *.gpkg
+snowflake.log
+niva/tare/stortare-tetthetsklasser_norge_2021_25833
+niva/tare/*.xml
+.vscode/settings.json

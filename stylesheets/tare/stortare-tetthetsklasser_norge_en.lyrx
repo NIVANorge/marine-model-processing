@@ -1,0 +1,88 @@
+{
+  "type": "CIMLayerDocument",
+  "version": "3.2.0",
+  "build": 36057,
+  "layers": [
+    "CIMPATH=raster/stortare-tetthetsklasser_norge_en.json"
+  ],
+  "layerDefinitions": [
+    {
+      "type": "CIMRasterLayer",
+      "name": "stortare-tetthetsklasser_norge_en",
+      "uRI": "CIMPATH=raster/stortare-tetthetsklasser_norge_en.json",
+      "visibility": true,
+      "showPopups": true,
+      "colorizer": {
+        "type": "CIMRasterClassifyColorizer",
+        "classBreaks": [
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 0.5,
+            "label": "Single individuals, ≤ 0.5",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                200,
+                230,
+                210,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 5.0,
+            "label": "Scarce occurrences, > 0.5, ≤ 5",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                100,
+                170,
+                120,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 10.0,
+            "label": "Moderately dense kelp forest, > 5, ≤ 10",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                17,
+                119,
+                51,
+                100
+              ]
+            }
+          },
+          {
+            "type": "CIMRasterClassBreak",
+            "upperBound": 10000000000.0,
+            "label": "Dense kelp forest, > 10",
+            "color": {
+              "type": "CIMRGBColor",
+              "values": [
+                9,
+                60,
+                26,
+                100
+              ]
+            }
+          }
+        ],
+        "minimumBreak": 0.1,
+        "field": "Value",
+        "showInAscendingOrder": true,
+        "numberFormat": {
+          "type": "CIMNumericFormat",
+          "alignmentOption": "esriAlignRight",
+          "alignmentWidth": 0,
+          "roundingOption": "esriRoundNumberOfDecimals",
+          "roundingValue": 6
+        }
+      }
+    }
+  ]
+}

@@ -148,7 +148,71 @@ def _solid_fill_symbol(r: int, g: int, b: int) -> dict:
     }
 
 
-def build_lyrx_vector(name: str, entries: list[dict], field: str) -> dict:
+def parse_continuous_raster(qml_path: Path) -> tuple[list[dict], float]:
+    """Return (entries, min_value) from a singlebandpseudocolor DISCRETE QML.
+
+    Each entry has keys: upperBound (float), color (hex str), label (str).
+    """
+    tree = ET.parse(qml_path)
+    root = tree.getroot()
+    shader = root.find(".//colorrampshader")
+    min_value = float(shader.attrib.get("minimumValue", 0))
+    entries = []
+    for item in shader.findall("item"):
+        entries.append(
+            {
+                "upperBound": float(item.attrib["value"]),
+                "color": item.attrib["color"],
+                "label": item.attrib["label"],
+            }
+        )
+    return entries, min_value
+
+
+def build_lyrx_continuous_raster(name: str, entries: list[dict], min_value: float) -> dict:
+    class_breaks = []
+    for entry in entries:
+        r, g, b = hex_to_rgb(entry["color"])
+        class_breaks.append(
+            {
+                "type": "CIMRasterClassBreak",
+                "upperBound": entry["upperBound"],
+                "label": entry["label"],
+                "color": {"type": "CIMRGBColor", "values": [r, g, b, 100]},
+            }
+        )
+    return {
+        "type": "CIMLayerDocument",
+        "version": "3.2.0",
+        "build": 36057,
+        "layers": [f"CIMPATH=raster/{name}.json"],
+        "layerDefinitions": [
+            {
+                "type": "CIMRasterLayer",
+                "name": name,
+                "uRI": f"CIMPATH=raster/{name}.json",
+                "visibility": True,
+                "showPopups": True,
+                "colorizer": {
+                    "type": "CIMRasterClassifyColorizer",
+                    "classBreaks": class_breaks,
+                    "minimumBreak": min_value,
+                    "field": "Value",
+                    "showInAscendingOrder": True,
+                    "numberFormat": {
+                        "type": "CIMNumericFormat",
+                        "alignmentOption": "esriAlignRight",
+                        "alignmentWidth": 0,
+                        "roundingOption": "esriRoundNumberOfDecimals",
+                        "roundingValue": 6,
+                    },
+                },
+            }
+        ],
+    }
+
+
+
     classes = []
     for entry in entries:
         r, g, b = entry["color"]
@@ -205,7 +269,8 @@ def convert(qml_path: Path) -> Path:
         entries = parse_paletted_raster(qml_path)
         doc = build_lyrx_paletted_raster(name, entries)
     elif qml_type == "continuous_raster":
-        return Path("")
+        entries, min_value = parse_continuous_raster(qml_path)
+        doc = build_lyrx_continuous_raster(name, entries, min_value)
     elif qml_type == "vector":
         entries, field = parse_vector(qml_path)
         doc = build_lyrx_vector(name, entries, field)
@@ -216,7 +281,7 @@ def convert(qml_path: Path) -> Path:
 
 
 if __name__ == "__main__":
-    stylesheet_dir = Path(__file__).parent.parent / "stylesheets"
+    stylesheet_dir = Path(__file__).parent.parent / "stylesheets" / "tare"
     for qml_file in sorted(stylesheet_dir.glob("*.qml")):
         out = convert(qml_file)
         if out.name:

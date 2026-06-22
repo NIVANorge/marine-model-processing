@@ -2,6 +2,7 @@ from pathlib import Path
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
 _NIVA_DIR = ROOT_PATH / "niva"
+TARE_DIR = _NIVA_DIR / "tare"
 AUX = ROOT_PATH / "aux"
 
 SOURCE = _NIVA_DIR / "EswmRaster.tif"

@@ -85,7 +85,7 @@ KLASSE_INFO_SUKKERTARE: dict[KlasseSukkertare, dict[str, str]] = {
 
 KLASSE_INFO_MERGED_SUKKERTARE: dict[KlasseSukkertare, dict[str, str]] = {
 
-    3: {
+    1: {
         "navn_no": "Tett/Middels tett (>7/m²)",
         "navn_en": "Dense/Moderately dense (>7/m²)",
     }
